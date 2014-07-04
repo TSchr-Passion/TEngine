@@ -55,7 +55,7 @@ public class Main {
 	
 	public void update(int delta) {
 		// rotate quad
-		//rotation += 0.15f * delta;
+		rotation += 0.10f * delta;
 		
 		if (Keyboard.isKeyDown(Keyboard.KEY_LEFT)) x -= 0.35f * delta;
 		if (Keyboard.isKeyDown(Keyboard.KEY_RIGHT)) x += 0.35f * delta;

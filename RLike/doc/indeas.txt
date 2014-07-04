@@ -1,0 +1,48 @@
+
+
+roguelike:
+
+the player is controlling a hero inside a dungeon. the dungeon map is created randomly with an exit which leads to the next level and
+various things in the dungeon like enemies, treasurechests etc.
+the player can use the 4 directionbuttons to move the hero 1 square in that direction or use one of his skills. every action is basicly one turn
+and each turn the enemies act aswell.
+inside the dungeon the hero can find items that he can equip like weapons, armor, and trinkets that grant various stats.
+when the hero dies the player gets experience points based on the dungeonlevel reached that he can spent buing new traits for the next hero.
+as soon as the player starts a new game a new hero is created with traits that are unlocked an choosen by the player.
+
+
+hero stats:
+-hp/maxhp				(life of the hero as soon as it reaches 0 the hero dies)
+-armor					(armor reduces the dmg taken by physicaldmg)
+-resistance				(resistance reduces the dmg taken by magical dmg)
+-attackpower			(increases the physical dmg the hero does)
+-spellpower				(increases the magical dmg the hero does)
+-energy/max/reg/		(energy is required to use some skills)
+-mana/max/reg/			(mana is required to use some skills)
+
+[maybe: dodge, crit, vision range, ...]
+
+special atributes on items:
+items should be able to have special attributes e.g.: enemies take x damage when they dmg you / physical attack also deal x magic damage on hit /
+aoe % or x dmg on hit /debuffs/poision etc
+
+
+item slots:
+helm, armor, pants, gloves, boots, trinkets*4, weapon*2
+
+the hero can either wield 2 weapons, one weapon and a shield or one 2handed weapon
+(stats have to be carefully chosen)
+
+certain stats have different 'costs' on different items types.
+
+
+maptiles:
+attributes: walkable,seethrough,...
+ground (gravel,grass,mud)
+impassable (metal bars, water, lava,...)
+tallgrass (grass, webs, fog,...)
+wall (wall, statue, column, ...)
+
+
+to determin:
+-manareg vs healspell / maybe charges per dungeonlevel
