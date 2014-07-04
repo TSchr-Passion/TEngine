@@ -117,7 +117,7 @@ public class Main {
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		
 		try {
-			texture = TextureLoader.getTexture("PJPG", ResourceLoader.getResourceAsStream("res/text_rock.jpg"));
+			texture = TextureLoader.getTexture("JPG", ResourceLoader.getResourceAsStream("res/tex_rock.jpg"));
 		}
 		catch(Exception e)
 		{e.printStackTrace();}
@@ -128,7 +128,7 @@ public class Main {
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 
 		// R,G,B,A Set The Color To Blue One Time Only
-		GL11.glColor3f(0.5f, 0.5f, 1.0f);
+		//GL11.glColor3f(0.5f, 0.5f, 1.0f);
 		texture.bind();
 		
 		// draw quad
