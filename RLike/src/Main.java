@@ -4,6 +4,7 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL13;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
@@ -11,7 +12,7 @@ import org.newdawn.slick.util.ResourceLoader;
 
 public class Main {
 
-	private Texture texture;
+	private Texture texture[];
 	
 	/** position of quad */
 	float x = 400, y = 300;
@@ -116,11 +117,19 @@ public class Main {
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		
+		texture=new Texture[2];
 		try {
-			texture = TextureLoader.getTexture("JPG", ResourceLoader.getResourceAsStream("res/tex_rock.jpg"));
+			texture[0] = TextureLoader.getTexture("JPG", ResourceLoader.getResourceAsStream("res/tex_rock.jpg"));
 		}
-		catch(Exception e)
-		{e.printStackTrace();}
+		catch(Exception e){e.printStackTrace();}
+		GL13.glActiveTexture(GL13.GL_TEXTURE0+0);texture[0].bind();
+		
+		try {
+			texture[1] = TextureLoader.getTexture("JPG", ResourceLoader.getResourceAsStream("res/tex_grass.jpg"));
+		}
+		catch(Exception e){e.printStackTrace();}
+		GL13.glActiveTexture(GL13.GL_TEXTURE0+1);texture[1].bind();
+		//GL13.glActiveTexture(0);
 	}
 
 	public void renderGL() {
@@ -129,8 +138,9 @@ public class Main {
 
 		// R,G,B,A Set The Color To Blue One Time Only
 		//GL11.glColor3f(0.5f, 0.5f, 1.0f);
-		texture.bind();
 		
+		//texture[0].bind();
+		//GL13.glActiveTexture(GL13.GL_TEXTURE0);
 		// draw quad
 		GL11.glPushMatrix();
 			GL11.glTranslatef(x, y, 0);
@@ -138,12 +148,16 @@ public class Main {
 			GL11.glTranslatef(-x, -y, 0);
 			
 			GL11.glBegin(GL11.GL_QUADS);
+				//GL13.glMultiTexCoord2f(GL13.GL_TEXTURE0+1, 0, 0);
 				GL11.glTexCoord2f(0,0);
 				GL11.glVertex2f(x - 50, y - 50);
+				//GL13.glMultiTexCoord2f(GL13.GL_TEXTURE0+1, 1, 0);
 				GL11.glTexCoord2f(1,0);
 				GL11.glVertex2f(x + 50, y - 50);
+				//GL13.glMultiTexCoord2f(GL13.GL_TEXTURE0+1, 1, 1);
 				GL11.glTexCoord2f(1,1);
 				GL11.glVertex2f(x + 50, y + 50);
+				//GL13.glMultiTexCoord2f(GL13.GL_TEXTURE0+1, 0, 1);
 				GL11.glTexCoord2f(0,1);
 				GL11.glVertex2f(x - 50, y + 50);
 			GL11.glEnd();
