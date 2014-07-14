@@ -3,6 +3,9 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 
 import org.lwjgl.opengl.*;
+import org.newdawn.slick.opengl.Texture;
+import org.newdawn.slick.opengl.TextureLoader;
+import org.newdawn.slick.util.ResourceLoader;
 
 import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL11.*;
@@ -10,6 +13,7 @@ import static org.lwjgl.opengl.GL11.*;
 public class TEngine
 {
 	int program[][]; //[count] [program,vertexshader,fragmentshader]
+	Texture texture[]; //all texturemaps
 	
 	public TEngine()
 	{
@@ -31,20 +35,20 @@ public class TEngine
 	
 	public void destroy()
 	{
-		deleteProgram();
+		deleteProgramBuffer();
 		Display.destroy();
 	}
 	
-	public void createProgram(int num)
+	public void createProgramBuffer(int num)
 	{
 		int c=num;
 		if (c<1) c=1;
-		deleteProgram();
+		deleteProgramBuffer();
 		
 		program=new int[c][3];
 	}
 	
-	public void deleteProgram()
+	public void deleteProgramBuffer()
 	{
 		if (program!=null)
 		{
@@ -108,6 +112,45 @@ public class TEngine
 		glValidateProgram(program[num][0]);
 	}
 	
+	public void useProgram(int num)
+	{
+		if ((program==null) || (num<0) || (num>=program.length) || (program[num]==null) || (program[num][0]==0)) return;
+		glUseProgram(program[num][0]);
+	}
+	
+	public void destroyTextureBuffer()
+	{
+		if (texture!=null)
+		{
+			for(int i=0;i<texture.length;++i)
+			{
+				if (texture[i]!=null) texture[i].release();
+			}
+		}
+	}
+	
+	public void createTextureBuffer(int size)
+	{
+		int s=size;
+		
+		if (s<1) s=1;
+		destroyTextureBuffer();
+		
+		texture=new Texture[s];
+	}
+	
+	public boolean loadTexture(int num,String filename,String filetype)
+	{
+		if ( (texture==null) || (num<0) || (num>=texture.length) ) return false;
+		
+		try {
+			texture[num] = TextureLoader.getTexture(filetype, ResourceLoader.getResourceAsStream(filename));
+		}
+		catch(Exception e){e.printStackTrace();}
+				
+		return true;
+	}
+	
 	public boolean isRunning()
 	{
 		return !Display.isCloseRequested();
@@ -115,18 +158,23 @@ public class TEngine
 	
 	public void draw()
 	{
-		glUseProgram(program[0][0]);
-		
+		texture[0].bind();
 		glBegin(GL_TRIANGLES);
-		glColor3f(1,0,0);
-		glVertex2f(-0.5f,-0.5f);
-		glColor3f(0,1,0);
-		glVertex2f(0.5f,-0.5f);
-		glColor3f(0,0,1);
-		glVertex2f(0.0f,0.5f);
-		glEnd();
 		
-		glUseProgram(0);
+		glColor3f(1,0,0);
+		glTexCoord2f(0.0f, 0.0f);
+		glVertex2f(-0.5f,-0.5f);
+		
+		glColor3f(0,1,0);
+		glTexCoord2f(1.0f, 0.0f);
+		glVertex2f(0.5f,-0.5f);
+		
+		
+		glColor3f(0,0,1);
+		glTexCoord2f(0.5f, 1.0f);
+		glVertex2f(0.0f,0.5f);
+		
+		glEnd();
 		
 		Display.update();
 		Display.sync(60);
