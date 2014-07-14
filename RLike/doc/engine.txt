@@ -2,21 +2,21 @@
 
 basic features:
 
-2d engine that can draw sprites, maybe tinting.
+2d engine that can draw sprites, with tinting.
 
 
 the engine manages entities basicly rectangluar shapes that have a position inculding height, rotation, a sprite, flags and tinting associated with them and also spritesets
 which are basicly textures that entities link to for their texture.
 
 for each frame all active sprites are drawn.
-the user can create new spritesets from textures (divding a texture into smaller parts or using it as a whole)
+the user can create new spritesets from textures (dividing a texture into smaller parts or using it as a whole)
 the user can also create entities and manage their attributes (position, rotation etc.)
 
 
 propably flipping sprites
 unsure font-spritemaps
 
-propably not: render to texture and then render that texture to the screen (->retro look)
+maybe: render to texture and then render that texture to the screen (->retro look)
 
 missing on purpose:
 	no real 3d, no real lighting(only through tinting), no need to load 3d models, animation only though sprite changing
