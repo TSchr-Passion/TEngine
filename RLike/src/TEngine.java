@@ -14,7 +14,6 @@ public class TEngine
 	int program[][]; //[count] [program,vertexshader,fragmentshader]
 	Texture texture[]; //all texturemaps
 	
-	FloatBuffer vertex_data;
 	int vertex_buffer;
 	
 	public TEngine()
@@ -29,10 +28,7 @@ public class TEngine
 			Display.setTitle(title);
 			Display.create();
 			
-			System.out.println("version: "+GL11.glGetString(GL11.GL_VERSION));
-			
-			GL11.glViewport(0, 0, width, height);
-			GL11.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+			System.out.println("OpenGL ver.: "+GL11.glGetString(GL11.GL_VERSION));
 		}
 		catch(Exception e){
 			System.out.println("Could not initialize Display");
@@ -170,7 +166,7 @@ public class TEngine
 		float[] positionData = new float[] {
 		    	0f,		0f,		0f,
 		    	-1f,	0f, 	0f,
-		    	0f,		1f,		0f
+		    	0f,		0.8f,		0f
 		};
  
 		// create color data
@@ -178,6 +174,13 @@ public class TEngine
 				0f,			0f,			1f,
 				1f,			0f,			0f,
 				0f,			1f,			0f
+		};
+		
+		// create color data
+		float[] textureData = new float[]{
+				0f,			0f,			1.0f,
+				1f,			0f,			1.0f,
+				0f,			1f,			1.0f
 		};
  
 		// convert vertex array to buffer
@@ -188,7 +191,11 @@ public class TEngine
 		// convert color array to buffer
 		FloatBuffer colorBuffer = BufferUtils.createFloatBuffer(colorData.length);
 		colorBuffer.put(colorData);
-		colorBuffer.flip();		
+		colorBuffer.flip();
+		
+		FloatBuffer textureBuffer = BufferUtils.createFloatBuffer(textureData.length);
+		textureBuffer.put(positionData);
+		textureBuffer.flip();
  
 		// create vertex byffer object (VBO) for vertices
 		int positionBufferHandle = GL15.glGenBuffers();
@@ -200,6 +207,10 @@ public class TEngine
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, colorBufferHandle);
 		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, colorBuffer, GL15.GL_STATIC_DRAW);
  
+		int texBufferHandle = GL15.glGenBuffers();
+		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, texBufferHandle);
+		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, colorBuffer, GL15.GL_STATIC_DRAW);
+		
 		// unbind VBO
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
  
@@ -208,6 +219,7 @@ public class TEngine
 		GL30.glBindVertexArray(vaoHandle);
 		GL20.glEnableVertexAttribArray(0);
 		GL20.glEnableVertexAttribArray(1);
+		GL20.glEnableVertexAttribArray(2);
  
 		// assign vertex VBO to slot 0 of VAO
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, positionBufferHandle);
@@ -216,6 +228,10 @@ public class TEngine
 		// assign vertex VBO to slot 1 of VAO
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, colorBufferHandle);
 		GL20.glVertexAttribPointer(1, 3, GL11.GL_FLOAT, false, 0, 0);
+		
+		// assign vertex VBO to slot 2 of VAO
+		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, texBufferHandle);
+		GL20.glVertexAttribPointer(2, 3, GL11.GL_FLOAT, false, 0, 0);
  
 		// unbind VBO
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
@@ -225,13 +241,14 @@ public class TEngine
 	
 	public void draw()
 	{
-		texture[0].bind();
+		texture[1].bind();
 		
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 		
 		GL30.glBindVertexArray(vertex_buffer);
 		GL20.glEnableVertexAttribArray(0); // VertexPosition
 		GL20.glEnableVertexAttribArray(1); // VertexColor
+		GL20.glEnableVertexAttribArray(2); // VertexTex
 		
 		GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, 3);
 		
