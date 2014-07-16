@@ -1,3 +1,4 @@
+//VERTEX SHADER
 varying vec3 color;
 
 void main()

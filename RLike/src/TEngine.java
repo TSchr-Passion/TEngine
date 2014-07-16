@@ -12,6 +12,7 @@ import static org.lwjgl.opengl.GL11.*;
 
 public class TEngine
 {
+	int m_Width,m_Height;
 	int program[][]; //[count] [program,vertexshader,fragmentshader]
 	Texture texture[]; //all texturemaps
 	
@@ -23,6 +24,8 @@ public class TEngine
 	public void init(String title,int width,int height)
 	{
 		try {
+			m_Width=width;
+			m_Height=height;
 			Display.setDisplayMode(new DisplayMode(width,height));
 			Display.setTitle(title);
 			Display.create();
@@ -32,7 +35,6 @@ public class TEngine
 			Display.destroy();System.exit(1);
 		}
 	}
-	
 	public void destroy()
 	{
 		deleteProgramBuffer();
@@ -47,7 +49,6 @@ public class TEngine
 		
 		program=new int[c][3];
 	}
-	
 	public void deleteProgramBuffer()
 	{
 		if (program!=null)
@@ -64,7 +65,6 @@ public class TEngine
 		}
 		program=null;
 	}
-	
 	public void loadProgram(int num,String vsFile,String fsFile)
 	{
 		if ((num<0) || (program==null) || (num>=program.length)) return;
@@ -111,7 +111,6 @@ public class TEngine
 		glLinkProgram(program[num][0]);
 		glValidateProgram(program[num][0]);
 	}
-	
 	public void useProgram(int num)
 	{
 		if ((program==null) || (num<0) || (num>=program.length) || (program[num]==null) || (program[num][0]==0)) return;
@@ -128,7 +127,6 @@ public class TEngine
 			}
 		}
 	}
-	
 	public void createTextureBuffer(int size)
 	{
 		int s=size;
@@ -138,7 +136,6 @@ public class TEngine
 		
 		texture=new Texture[s];
 	}
-	
 	public boolean loadTexture(int num,String filename,String filetype)
 	{
 		if ( (texture==null) || (num<0) || (num>=texture.length) ) return false;
@@ -158,21 +155,30 @@ public class TEngine
 	
 	public void draw()
 	{
+		float x,y,w,h;
+		
+		x=100.0f;
+		y=10.0f;
+		w=256.0f;
+		h=256.0f;
+		
+		float p0x,p0y,p1x,p1y;
+		
+		p0x=2.0f*x/(float)m_Width-1.0f;
+		p0y=2.0f*((float)m_Height-y-h)/(float)m_Height-1.0f;
+		p1x=2.0f*(x+w)/(float)m_Width-1.0f;
+		p1y=2.0f*((float)m_Height-(y))/(float)m_Height-1.0f;
+		
 		texture[0].bind();
 		glBegin(GL_TRIANGLES);
 		
-		glColor3f(1,0,0);
-		glTexCoord2f(0.0f, 0.0f);
-		glVertex2f(-0.5f,-0.5f);
+		glColor3f(1,1,1);glTexCoord2f(0.0f, 1.0f);glVertex3f(p0x,p0y,-1.0f);
+		glColor3f(1,1,1);glTexCoord2f(0.0f, 0.0f);glVertex3f(p0x,p1y,-1.0f);
+		glColor3f(1,1,1);glTexCoord2f(1.0f, 1.0f);glVertex3f(p1x,p0y,-1.0f);
 		
-		glColor3f(0,1,0);
-		glTexCoord2f(1.0f, 0.0f);
-		glVertex2f(0.5f,-0.5f);
-		
-		
-		glColor3f(0,0,1);
-		glTexCoord2f(0.5f, 1.0f);
-		glVertex2f(0.0f,0.5f);
+		glColor3f(1,1,1);glTexCoord2f(1.0f, 1.0f);glVertex3f(p1x,p0y,-1.0f);
+		glColor3f(1,1,1);glTexCoord2f(0.0f, 0.0f);glVertex3f(p0x,p1y,-1.0f);
+		glColor3f(1,1,1);glTexCoord2f(1.0f, 0.0f);glVertex3f(p1x,p1y,-1.0f);
 		
 		glEnd();
 		
