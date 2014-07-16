@@ -1,9 +1,12 @@
-varying vec3 color;
-
-uniform sampler2D texture1;
-
+#version 400
+ 
+// corresponds with output from vertex shader
+in vec3 Color;
+ 
+out vec4 FragColor;
+ 
 void main()
 {
-	//gl_FragColor = vec4(color,1);
-	gl_FragColor=texture2D(texture1, gl_TexCoord[0].st);
+	// assign vertex color to pixel color
+    FragColor = vec4(Color, 1.0);
 }

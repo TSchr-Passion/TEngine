@@ -1,19 +1,21 @@
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.nio.FloatBuffer;
 
+import org.lwjgl.*;
 import org.lwjgl.opengl.*;
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
 import org.newdawn.slick.util.ResourceLoader;
 
-import static org.lwjgl.opengl.GL20.*;
-import static org.lwjgl.opengl.GL11.*;
-
 public class TEngine
 {
 	int program[][]; //[count] [program,vertexshader,fragmentshader]
 	Texture texture[]; //all texturemaps
+	
+	FloatBuffer vertex_data;
+	int vertex_buffer;
 	
 	public TEngine()
 	{
@@ -26,6 +28,11 @@ public class TEngine
 			Display.setDisplayMode(new DisplayMode(width,height));
 			Display.setTitle(title);
 			Display.create();
+			
+			System.out.println("version: "+GL11.glGetString(GL11.GL_VERSION));
+			
+			GL11.glViewport(0, 0, width, height);
+			GL11.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 		}
 		catch(Exception e){
 			System.out.println("Could not initialize Display");
@@ -56,9 +63,9 @@ public class TEngine
 			{
 				if (program[i]!=null)
 				{
-					glDeleteProgram(program[i][0]);
-					glDeleteShader(program[i][1]);
-					glDeleteShader(program[i][2]);
+					GL20.glDeleteProgram(program[i][0]);
+					GL20.glDeleteShader(program[i][1]);
+					GL20.glDeleteShader(program[i][2]);
 				}
 			}
 		}
@@ -71,14 +78,14 @@ public class TEngine
 		
 		if (program[num]!=null)
 		{
-			glDeleteProgram(program[num][0]);
-			glDeleteShader(program[num][1]);
-			glDeleteShader(program[num][2]);
+			GL20.glDeleteProgram(program[num][0]);
+			GL20.glDeleteShader(program[num][1]);
+			GL20.glDeleteShader(program[num][2]);
 		}
 		
-		program[num][0]=glCreateProgram();
-		program[num][1]=glCreateShader(GL_VERTEX_SHADER);
-		program[num][2]=glCreateShader(GL_FRAGMENT_SHADER);
+		program[num][0]=GL20.glCreateProgram();
+		program[num][1]=GL20.glCreateShader(GL20.GL_VERTEX_SHADER);
+		program[num][2]=GL20.glCreateShader(GL20.GL_FRAGMENT_SHADER);
 		
 		StringBuilder vsSource=new StringBuilder();
 		StringBuilder fsSource=new StringBuilder();
@@ -97,25 +104,26 @@ public class TEngine
 			System.out.println("Error loading Shaderfiles: "+e.toString());
 			Display.destroy();System.exit(1);
 		}
-		glShaderSource(program[num][1],vsSource);
-		glCompileShader(program[num][1]);
-		if (glGetShaderi(program[num][1],GL_COMPILE_STATUS) == GL_FALSE)  {System.out.println("error compiling vertexshader");}
+		GL20.glShaderSource(program[num][1],vsSource);
+		GL20.glCompileShader(program[num][1]);
+		if (GL20.glGetShaderi(program[num][1],GL20.GL_COMPILE_STATUS) == GL11.GL_FALSE)  {System.out.println("error compiling vertexshader");}
 		
-		glShaderSource(program[num][2],fsSource);
-		glCompileShader(program[num][2]);
-		if (glGetShaderi(program[num][2],GL_COMPILE_STATUS) == GL_FALSE)  {System.out.println("error compiling fragmentshader");}
+		GL20.glShaderSource(program[num][2],fsSource);
+		GL20.glCompileShader(program[num][2]);
+		if (GL20.glGetShaderi(program[num][2],GL20.GL_COMPILE_STATUS) == GL11.GL_FALSE)  {System.out.println("error compiling fragmentshader");}
 		
-		glAttachShader(program[num][0],program[num][1]);
-		glAttachShader(program[num][0],program[num][2]);
+		GL20.glAttachShader(program[num][0],program[num][1]);
+		GL20.glAttachShader(program[num][0],program[num][2]);
 		
-		glLinkProgram(program[num][0]);
-		glValidateProgram(program[num][0]);
+		GL20.glLinkProgram(program[num][0]);
+		GL20.glValidateProgram(program[num][0]);
+				
 	}
 	
 	public void useProgram(int num)
 	{
 		if ((program==null) || (num<0) || (num>=program.length) || (program[num]==null) || (program[num][0]==0)) return;
-		glUseProgram(program[num][0]);
+		GL20.glUseProgram(program[num][0]);
 	}
 	
 	public void destroyTextureBuffer()
@@ -156,25 +164,76 @@ public class TEngine
 		return !Display.isCloseRequested();
 	}
 	
+	public void setupVBO()
+	{
+		// create vertex data 
+		float[] positionData = new float[] {
+		    	0f,		0f,		0f,
+		    	-1f,	0f, 	0f,
+		    	0f,		1f,		0f
+		};
+ 
+		// create color data
+		float[] colorData = new float[]{
+				0f,			0f,			1f,
+				1f,			0f,			0f,
+				0f,			1f,			0f
+		};
+ 
+		// convert vertex array to buffer
+		FloatBuffer positionBuffer = BufferUtils.createFloatBuffer(positionData.length);
+		positionBuffer.put(positionData);
+		positionBuffer.flip();
+ 
+		// convert color array to buffer
+		FloatBuffer colorBuffer = BufferUtils.createFloatBuffer(colorData.length);
+		colorBuffer.put(colorData);
+		colorBuffer.flip();		
+ 
+		// create vertex byffer object (VBO) for vertices
+		int positionBufferHandle = GL15.glGenBuffers();
+		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, positionBufferHandle);
+		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, positionBuffer, GL15.GL_STATIC_DRAW);
+ 
+		// create VBO for color values
+		int colorBufferHandle = GL15.glGenBuffers();
+		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, colorBufferHandle);
+		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, colorBuffer, GL15.GL_STATIC_DRAW);
+ 
+		// unbind VBO
+		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
+ 
+		// create vertex array object (VAO)
+		int vaoHandle = GL30.glGenVertexArrays();
+		GL30.glBindVertexArray(vaoHandle);
+		GL20.glEnableVertexAttribArray(0);
+		GL20.glEnableVertexAttribArray(1);
+ 
+		// assign vertex VBO to slot 0 of VAO
+		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, positionBufferHandle);
+		GL20.glVertexAttribPointer(0, 3, GL11.GL_FLOAT, false, 0, 0);
+ 
+		// assign vertex VBO to slot 1 of VAO
+		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, colorBufferHandle);
+		GL20.glVertexAttribPointer(1, 3, GL11.GL_FLOAT, false, 0, 0);
+ 
+		// unbind VBO
+		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
+ 
+		vertex_buffer= vaoHandle;
+	}
+	
 	public void draw()
 	{
 		texture[0].bind();
-		glBegin(GL_TRIANGLES);
 		
-		glColor3f(1,0,0);
-		glTexCoord2f(0.0f, 0.0f);
-		glVertex2f(-0.5f,-0.5f);
+		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 		
-		glColor3f(0,1,0);
-		glTexCoord2f(1.0f, 0.0f);
-		glVertex2f(0.5f,-0.5f);
+		GL30.glBindVertexArray(vertex_buffer);
+		GL20.glEnableVertexAttribArray(0); // VertexPosition
+		GL20.glEnableVertexAttribArray(1); // VertexColor
 		
-		
-		glColor3f(0,0,1);
-		glTexCoord2f(0.5f, 1.0f);
-		glVertex2f(0.0f,0.5f);
-		
-		glEnd();
+		GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, 3);
 		
 		Display.update();
 		Display.sync(60);

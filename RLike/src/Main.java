@@ -16,6 +16,8 @@ public class Main
 		eng.loadTexture(0, "res/tex_rock.jpg", "JPG");
 		eng.loadTexture(1, "res/tex_grass.jpg", "JPG");
 		
+		eng.setupVBO();
+		
 		while(eng.isRunning())
 		{
 			eng.draw();
