@@ -241,6 +241,7 @@ public class TEngine
 	
 	public void draw()
 	{
+		GL13.glActiveTexture(GL13.GL_TEXTURE0+0);
 		texture[1].bind();
 		
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
