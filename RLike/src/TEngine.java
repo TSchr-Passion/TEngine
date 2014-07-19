@@ -1,6 +1,7 @@
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.util.ArrayList;
 
 import org.lwjgl.opengl.*;
 import org.newdawn.slick.opengl.Texture;
@@ -15,10 +16,14 @@ public class TEngine
 	int m_Width,m_Height;
 	int program[][]; //[count] [program,vertexshader,fragmentshader]
 	Texture texture[]; //all texturemaps
+	ArrayList<Sprite> spritelist; 
+	int spriteid;
+	int m_fps;
 	
-	public TEngine()
+	public TEngine(int fps)
 	{
-		
+		spriteid=1;
+		m_fps=fps;
 	}
 	
 	public void init(String title,int width,int height)
@@ -29,6 +34,12 @@ public class TEngine
 			Display.setDisplayMode(new DisplayMode(width,height));
 			Display.setTitle(title);
 			Display.create();
+			
+			glEnable(GL_TEXTURE_2D);
+			glEnable(GL_DEPTH_TEST);
+			
+			spriteid=1;
+			spritelist=new ArrayList<Sprite>();
 		}
 		catch(Exception e){
 			System.out.println("Could not initialize Display");
@@ -148,6 +159,25 @@ public class TEngine
 		return true;
 	}
 	
+	public Sprite createSprite(int texture,float x,float y,float w,float h)
+	{
+		spriteid++;
+		
+		Sprite s=new Sprite();
+		s.id=spriteid;
+		s.textureid=texture;
+		s.scr_Wf=2.0f/m_Width;
+		s.scr_Hf=2.0f/m_Height;
+		
+		s.pos[0]=2.0f*x/(float)m_Width-1.0f;
+		s.pos[1]=2.0f*((float)m_Height-y-h)/(float)m_Height-1.0f;
+		s.pos[2]=2.0f*(x+w)/(float)m_Width-1.0f;
+		s.pos[3]=2.0f*((float)m_Height-(y))/(float)m_Height-1.0f;
+		
+		spritelist.add(s);
+		
+		return s;
+	}
 	public boolean isRunning()
 	{
 		return !Display.isCloseRequested();
@@ -155,34 +185,25 @@ public class TEngine
 	
 	public void draw()
 	{
-		float x,y,w,h;
-		
-		x=100.0f;
-		y=10.0f;
-		w=256.0f;
-		h=256.0f;
-		
-		float p0x,p0y,p1x,p1y;
-		
-		p0x=2.0f*x/(float)m_Width-1.0f;
-		p0y=2.0f*((float)m_Height-y-h)/(float)m_Height-1.0f;
-		p1x=2.0f*(x+w)/(float)m_Width-1.0f;
-		p1y=2.0f*((float)m_Height-(y))/(float)m_Height-1.0f;
-		
-		texture[0].bind();
-		glBegin(GL_TRIANGLES);
-		
-		glColor3f(1,1,1);glTexCoord2f(0.0f, 1.0f);glVertex3f(p0x,p0y,-1.0f);
-		glColor3f(1,1,1);glTexCoord2f(0.0f, 0.0f);glVertex3f(p0x,p1y,-1.0f);
-		glColor3f(1,1,1);glTexCoord2f(1.0f, 1.0f);glVertex3f(p1x,p0y,-1.0f);
-		
-		glColor3f(1,1,1);glTexCoord2f(1.0f, 1.0f);glVertex3f(p1x,p0y,-1.0f);
-		glColor3f(1,1,1);glTexCoord2f(0.0f, 0.0f);glVertex3f(p0x,p1y,-1.0f);
-		glColor3f(1,1,1);glTexCoord2f(1.0f, 0.0f);glVertex3f(p1x,p1y,-1.0f);
-		
-		glEnd();
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		for(Sprite s:spritelist)
+		{
+			texture[s.textureid].bind();
+			glBegin(GL_TRIANGLES);
+			
+			glColor3f(1,1,1);glTexCoord2f(0.0f, 1.0f);glVertex3f(s.pos[0],s.pos[1],s.pos[4]);
+			glColor3f(1,1,1);glTexCoord2f(0.0f, 0.0f);glVertex3f(s.pos[0],s.pos[3],s.pos[4]);
+			glColor3f(1,1,1);glTexCoord2f(1.0f, 1.0f);glVertex3f(s.pos[2],s.pos[1],s.pos[4]);
+			
+			glColor3f(1,1,1);glTexCoord2f(1.0f, 1.0f);glVertex3f(s.pos[2],s.pos[1],s.pos[4]);
+			glColor3f(1,1,1);glTexCoord2f(0.0f, 0.0f);glVertex3f(s.pos[0],s.pos[3],s.pos[4]);
+			glColor3f(1,1,1);glTexCoord2f(1.0f, 0.0f);glVertex3f(s.pos[2],s.pos[3],s.pos[4]);
+			
+			glEnd();
+		}
 		
 		Display.update();
-		Display.sync(60);
+		Display.sync(m_fps);
 	}
+
 }
