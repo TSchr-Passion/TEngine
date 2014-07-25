@@ -188,18 +188,21 @@ public class TEngine
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		for(Sprite s:spritelist)
 		{
-			texture[s.textureid].bind();
-			glBegin(GL_TRIANGLES);
-			
-			glColor3f(1,1,1);glTexCoord2f(0.0f, 1.0f);glVertex3f(s.pos[0],s.pos[1],s.pos[4]);
-			glColor3f(1,1,1);glTexCoord2f(0.0f, 0.0f);glVertex3f(s.pos[0],s.pos[3],s.pos[4]);
-			glColor3f(1,1,1);glTexCoord2f(1.0f, 1.0f);glVertex3f(s.pos[2],s.pos[1],s.pos[4]);
-			
-			glColor3f(1,1,1);glTexCoord2f(1.0f, 1.0f);glVertex3f(s.pos[2],s.pos[1],s.pos[4]);
-			glColor3f(1,1,1);glTexCoord2f(0.0f, 0.0f);glVertex3f(s.pos[0],s.pos[3],s.pos[4]);
-			glColor3f(1,1,1);glTexCoord2f(1.0f, 0.0f);glVertex3f(s.pos[2],s.pos[3],s.pos[4]);
-			
-			glEnd();
+			if ((s.flags&Sprite.FLG_NODRAW)<=0)
+			{
+				texture[s.textureid].bind();
+				glBegin(GL_TRIANGLES);
+				
+				glColor4f(s.color[0],s.color[1],s.color[2],s.color[3]);glTexCoord2f(s.tex[0], s.tex[1]);glVertex3f(s.pos[0],s.pos[1],s.pos[4]);
+				glColor4f(s.color[0],s.color[1],s.color[2],s.color[3]);glTexCoord2f(s.tex[0], s.tex[3]);glVertex3f(s.pos[0],s.pos[3],s.pos[4]);
+				glColor4f(s.color[0],s.color[1],s.color[2],s.color[3]);glTexCoord2f(s.tex[2], s.tex[1]);glVertex3f(s.pos[2],s.pos[1],s.pos[4]);
+				
+				glColor4f(s.color[0],s.color[1],s.color[2],s.color[3]);glTexCoord2f(s.tex[2], s.tex[1]);glVertex3f(s.pos[2],s.pos[1],s.pos[4]);
+				glColor4f(s.color[0],s.color[1],s.color[2],s.color[3]);glTexCoord2f(s.tex[0], s.tex[3]);glVertex3f(s.pos[0],s.pos[3],s.pos[4]);
+				glColor4f(s.color[0],s.color[1],s.color[2],s.color[3]);glTexCoord2f(s.tex[2], s.tex[3]);glVertex3f(s.pos[2],s.pos[3],s.pos[4]);
+				
+				glEnd();
+			}
 		}
 		
 		Display.update();

@@ -13,7 +13,7 @@ the user can create new spritesets from textures (dividing a texture into smalle
 the user can also create entities and manage their attributes (position, rotation etc.)
 
 
-propably map objects n*m matrix with spirelinks for each field
+propably map objects n*m matrix with spitelinks for each field
 propably flipping sprites
 unsure font-spritemaps
 

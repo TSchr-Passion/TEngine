@@ -3,18 +3,23 @@
 
 public class Sprite
 {
+	public static final int FLG_NODRAW=1;
+	
 	public int id;
 	public float scr_Wf,scr_Hf;
 	public float pos[];
+	public float color[];
+	public float tex[];
 	public int textureid;
 	public int flags;
-	public float color[];
+	
 	
 	
 	public Sprite()
 	{
 		pos=new float[]{0.0f, 0.0f, 0.0f, 0.0f, -0.5f};
 		color=new float[]{1.0f, 1.0f, 1.0f, 1.0f};
+		tex=new float[]{0.0f, 1.0f, 1.0f, 0.0f};
 		flags=0;
 		scr_Wf=1.0f;
 		scr_Hf=1.0f;
@@ -45,4 +50,11 @@ public class Sprite
 		pos[4]=-z;
 	}
 	
+	public void setTint(float r,float g,float b,float a)
+	{
+		color[0]=r;
+		color[1]=g;
+		color[2]=b;
+		color[3]=a;
+	}
 }

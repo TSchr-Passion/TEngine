@@ -23,6 +23,12 @@ public class Main
 		s[0]=eng.createSprite(0, 10.0f, 10.0f, 128.0f, 128.0f);
 		s[1]=eng.createSprite(1, 300.0f, 50.0f, 64.0f, 64.0f);
 		s[2]=eng.createSprite(1, 500.0f, 50.0f, 128.0f, 128.0f);
+		s[2].setTint(0.5f, 0.0f, 0.5f, 1.0f);
+		
+		s[2].tex[0]=0.4f;
+		s[2].tex[1]=0.8f;
+		s[2].tex[2]=0.8f;
+		s[2].tex[3]=0.4f;
 		
 		s[0].move(200.0f, 0.0f);
 		s[0].setDepth(.4f);
