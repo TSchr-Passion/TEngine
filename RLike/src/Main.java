@@ -37,8 +37,6 @@ public class Main
 		int x,y;
 		while(eng.isRunning())
 		{
-			eng.draw();
-			
 			d+=0.1;
 			
 			x=Mouse.getX();
@@ -50,6 +48,8 @@ public class Main
 			if (Keyboard.isKeyDown(Keyboard.KEY_UP)) s[0].move(0.0f, -5.0f);
 			if (Keyboard.isKeyDown(Keyboard.KEY_LEFT)) s[0].move(-5.0f,0.0f);
 			if (Keyboard.isKeyDown(Keyboard.KEY_RIGHT)) s[0].move( 5.0f,0.0f);
+			
+			eng.draw();
 		}
 		
 		eng.destroy();
